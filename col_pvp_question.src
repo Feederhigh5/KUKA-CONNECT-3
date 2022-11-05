@@ -1,0 +1,42 @@
+&ACCESS RV
+DEFFCT INT col_pvp_question (player:IN)
+   DECL KrlMsg_T askForColumn
+   DECL KrlMsgDlgSK_T columnSoftkey[6]
+   DECL KrlMsgPar_T pvpColumnParameter[3]
+   DECL KrlMsgOpt_T columnOption
+   DECL INT dialogHandle
+   DECL INT dialogValue
+   DECL INT player
+   DECL BOOL dialogPresent
+   
+   ;FOLD SoftKeys
+   columnSoftkey[1] = {sk_type #value, sk_txt[] "Column 1"}
+   columnSoftkey[2] = {sk_type #value, sk_txt[] "Column 2"}
+   columnSoftkey[3] = {sk_type #value, sk_txt[] "Column 3"}
+   columnSoftkey[4] = {sk_type #value, sk_txt[] "Column 4"}
+   columnSoftkey[5] = {sk_type #value, sk_txt[] "Column 5"}
+   columnSoftkey[6] = {sk_type #value, sk_txt[] "Column 6"}
+   ;ENDFOLD SoftKeys
+   
+   ;FOLD Parameter
+   pvpColumnParameter[1] = {Par_Type #VALUE}
+   pvpColumnParameter[1].Par_int = player
+   pvpColumnParameter[2] = {Par_Type #EMPTY}
+   pvpColumnParameter[3] = {Par_Type #EMPTY}
+   ;ENDFOLD
+   ;some comment
+   
+   columnOption = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
+   askForColumn = {modul[] "Column" , Nr 2021, msg_txt[] "Player %1: Choose a column to drop your stone in."}
+   
+   dialogHandle = SET_KRLDLG(askForColumn, pvpColumnParameter[], columnSoftkey[], columnOption)
+   dialogValue = 0
+   dialogPresent = TRUE
+   
+   WHILE dialogPresent == TRUE
+       dialogPresent = EXISTS_KRLDLG(dialogHandle, dialogValue)
+   ENDWHILE
+   
+   
+   RETURN (dialogValue)
+ENDFCT

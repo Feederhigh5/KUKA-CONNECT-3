@@ -61,8 +61,8 @@ DEF getStone(row:IN, col:IN)
    
    $TOOL = TOOL_DATA[14]
    $BASE = BASE_DATA[5]
-   SPTP upPosition
+   SPTP upPosition WITH $APO= SAPO_PTP( PPDAT10 ) C_SPL
    SLIN placePosition
    GRPg_SetStateAndCheck(1,2,0.2,0)
-   SLIN upPosition
+   SLIN upPosition WITH $APO= SAPO_PTP( PPDAT10 ) C_SPL
 END

@@ -1,6 +1,6 @@
 &ACCESS RVP
 &REL 1
-DEF  connect3ZeroGravity( )
+DEF  connect3FullGravityPvP( )
 
 DECL INT row, col, targetColumn, targetRow, winningPlayer, currentPlayer, stoneNumber, moveToMake, myInt, gameNumber, numberOfWinsP1, numberOfWinsP2
 DECL INT robotColumn, robotRow
@@ -42,9 +42,9 @@ ENDFOR
 
 ; ---------- PREPARE BOARD WITH STONES -------
 
-; prepareBoard()
+;prepareBoard()
 
-;
+
 
 ; --------------------------------------------
 ; ---------- 3 START OF THE PROGRAM ---------- 
@@ -67,40 +67,40 @@ WHILE play == TRUE
    currentPlayer = -1
    moveToMake = -1
    targetColumn = -1
-   targetRow = -1
    
-  
     WHILE (checkWinner(board[,]) == -1)
+      targetColumn = col_pvp_question(1)
+      WHILE checkRow(board[,], targetColumn)  == -1
+        ; error message for full row
+        errorColumnFull(targetColumn)
         targetColumn = col_pvp_question(1)
-        targetRow = row_question(1)
-        WHILE board[targetRow,targetColumn]  <> 0
-           ; error message for full row
-           errorPlaceFull(targetColumn, targetRow)
-           targetColumn = col_pvp_question(1)
-           targetRow = row_question(1)
-        ENDWHILE
-        board[targetRow, targetColumn] = 1
-        placeStone(targetRow, targetColumn, 1, stoneNumber)
-        IF (checkWinner(board[,]) <> -1) THEN
-            EXIT
-        ENDIF
+      ENDWHILE
+      
+      targetRow = checkRow(board[,], targetColumn)
+      ; Place block for player
+      board[targetRow, targetColumn] = 1
+      placeStone(targetRow, targetColumn, 1, stoneNumber)
+      IF (checkWinner(board[,]) <> -1) THEN
+         EXIT
+      ENDIF
+      
+      targetColumn = col_pvp_question(2)
+      WHILE checkRow(board[,], targetColumn)  == -1
+        ; error message for full row
+        errorColumnFull(targetColumn)
         targetColumn = col_pvp_question(2)
-        targetRow = row_question(2)
-        WHILE board[targetRow,targetColumn]  <> 0
-           ; error message for full row
-           errorPlaceFull(targetColumn, targetRow)
-           targetColumn = col_pvp_question(2)
-           targetRow = row_question(2)
-        ENDWHILE
-        board[targetRow, targetColumn] = 2
-        placeStone(targetRow, targetColumn, 2, stoneNumber)
-        stoneNumber = stoneNumber + 1
-   ENDWHILE
+      ENDWHILE
+      
+      targetRow = checkRow(board[,], targetColumn)
+      ; Place block for player
+      board[targetRow, targetColumn] = 2
+      placeStone(targetRow, targetColumn, 2, stoneNumber)
+      stoneNumber = stoneNumber + 1
+    ENDWHILE
 
    ; Print the winner is Player
    winningPlayer = checkWinner(board[,])
    winnerAnnouncement(winningPlayer)
-   
    
    If winningPlayer == 1 THEN
       numberOfWinsP1 = numberOfWinsP1 +1

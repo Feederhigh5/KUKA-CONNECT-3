@@ -1,0 +1,30 @@
+&ACCESS RVE
+DEF  errorPlaceFull(requestedColumn:IN, requestedRow:IN)
+DECL INT requestedColumn, requestedRow
+DECL KrlMsg_T columnAnswer
+DECL KrlMsgPar_T columnParameter[3]
+DECL KrlMsgOpt_T option
+DECL INT handle
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+
+columnParameter[1] = {Par_Type #VALUE}
+columnParameter[1].Par_int = requestedColumn
+columnParameter[2] = {Par_Type #VALUE}
+columnParameter[2].Par_int = requestedRow
+columnParameter[3] = {Par_Type #EMPTY}
+columnAnswer = {modul[] "IDIOT" , Nr 2006, msg_txt[] "ERROR! Column %1 - row %2 is full."}
+option = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
+handle = Set_KrlMsg(#NOTIFY, columnAnswer, columnParameter[], option)
+
+END

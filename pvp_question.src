@@ -1,16 +1,16 @@
 &ACCESS RV1
-DEFFCT INT game_question ( )
-   DECL KrlMsg_T askForGame
-   DECL KrlMsgDlgSK_T gameSoftkey[2]
+DEFFCT INT pvp_question ( )
+   DECL KrlMsg_T askForMode
+   DECL KrlMsgDlgSK_T modeSoftkey[2]
    DECL KrlMsgPar_T somethingParameter[3]
-   DECL KrlMsgOpt_T gameOption
+   DECL KrlMsgOpt_T modeOption
    DECL INT dialogHandle
    DECL INT dialogValue
    DECL BOOL dialogPresent
    
    ;FOLD SoftKeys
-   gameSoftkey[1] = {sk_type #value, sk_txt[] "Gravity"}
-   gameSoftkey[2] = {sk_type #value, sk_txt[] "No gravity"}
+   modeSoftkey[1] = {sk_type #value, sk_txt[] "Robot."}
+   modeSoftkey[2] = {sk_type #value, sk_txt[] "Player."}
    ;ENDFOLD SoftKeys
    
    ;FOLD Parameter
@@ -19,10 +19,10 @@ DEFFCT INT game_question ( )
    somethingParameter[3] = {Par_Type #EMPTY}
    ;ENDFOLD
    
-   gameOption = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
-   askForGame = {modul[] "Game" , Nr 2022, msg_txt[] "Which game mode do you want to play?"}
+   modeOption = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
+   askForMode = {modul[] "Game mode" , Nr 2022, msg_txt[] "Want to play against a robot or player?"}
    
-   dialogHandle = SET_KRLDLG(askForGame, somethingParameter[], gameSoftkey[], gameOption)
+   dialogHandle = SET_KRLDLG(askForMode, somethingParameter[], modeSoftkey[], modeOption)
    dialogValue = 0
    dialogPresent = TRUE
    

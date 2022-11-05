@@ -1,0 +1,67 @@
+﻿DEF  drawCounterIncrease (winningPlayer:IN, numberOfWins:IN, gameNumber:IN)
+   DECL INT winningPlayer, numberOfWins, gameNumber
+   DECL REAL dX, dY, dZ
+   DECL FRAME placePosition, upPosition, drawPosition, drawUpPosition
+
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+   dX = 5
+   dZ = 30
+   dY = 25
+   
+   getAndReturnMarker(0)
+
+   IF gameNumber == 1 THEN
+      markscore()
+   ENDIF
+
+   IF winningPlayer == 1 THEN
+      placePosition = XP1 
+   ELSE
+      placePosition = XP2
+   ENDIF
+   
+   
+   
+   placePosition.X = placePosition.X + (numberOfWins-1)*dX
+   
+   upPosition = placePosition
+   upPosition.Z = upPosition.Z + dZ
+   
+   drawPosition = placePosition
+   drawPosition.Y = drawPosition.Y - dY
+   
+   drawUpPosition = drawPosition
+   drawUpPosition.Z = drawUpPosition.Z + dZ
+
+   $TOOL = TOOL_DATA[15]
+   $BASE = BASE_DATA[5]
+   
+   SPTP upPosition
+   SLIN placePosition
+   SLIN drawPosition 
+   SLIN drawUpPosition
+   
+   getAndReturnMarker(1)
+   
+   ;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+   
+
+END

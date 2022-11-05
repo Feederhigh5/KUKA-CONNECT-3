@@ -1,5 +1,5 @@
 ﻿DEF  mainMain ( )
-DECL INT gameMode
+DECL INT gameMode, pvpMode
 
 ;FOLD INI;%{PE}
   ;FOLD BASISTECH INI
@@ -13,11 +13,21 @@ DECL INT gameMode
   ;ENDFOLD (USER INI)
 ;ENDFOLD (INI)
 gameMode = -1
+pvpMode = -1
+
+
 gameMode = game_question()
 
 IF gameMode == 1 THEN
-   connect3FullGravity()
-ELSE
+   ; with gravity
+   pvpMode = pvp_question()
+   IF pvpMode == 1 THEN
+      connect3FullGravity()
+   ELSE
+      connect3FullGravityPvP()
+   ENDIF
+   ELSE
+   ; without gravity
    connect3ZeroGravity()
 ENDIF
 

@@ -30,7 +30,7 @@ maxRow = 3
 maxCol = 3
 dX = 58
 dY = 39
-dZ = 100
+dZ = 120
 
 FOR row = 1 to maxRow
    for col = 1 to maxCol

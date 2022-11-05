@@ -1,0 +1,33 @@
+﻿DEF  getAndReturnMarker (shouldReturn:IN)
+DECL INT shouldReturn
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+   $TOOL = TOOL_DATA[15]
+   $BASE = BASE_DATA[5]
+   
+   IF shouldReturn == 0 THEN
+      SPTP XP3 WITH $APO= SAPO_PTP( PPDAT3 ) C_SPL
+      SPTP XP1
+      SLIN XP2
+      GRPg_SetStateAndCheck(1, 2, 0.2, 1)
+      SLIN XP1
+      SPTP XP3 WITH $APO= SAPO_PTP( PPDAT3 ) C_SPL
+   ELSE 
+      SPTP XP3 WITH $APO= SAPO_PTP( PPDAT3 ) C_SPL
+      SPTP XP1
+      SLIN XP2
+      GRPg_SetStateAndCheck(1, 1, 0.2, 1)
+      SLIN XP1
+   ENDIF
+   
+END

@@ -2,7 +2,11 @@
 &REL 3
 &PARAM EDITMASK = *
 &PARAM TEMPLATE = C:\KRC\Roboter\Template\vorgabe
-DEF abholpunkte( )
+&PARAM DISKPATH = KRC:\R1\Program
+DEF drawWin()
+   DECL INT deckColumn, player
+   DECL REAL dX, dZ
+   DECL FRAME placePosition, upPosition
 ;FOLD INI;%{PE}
   ;FOLD BASISTECH INI
     GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
@@ -24,27 +28,46 @@ $H_POS=XHOME
 PTP  XHOME
 ;ENDFOLD
 
-;FOLD PTP P1 Vel=100 % PDAT1 Tool[14]:R2_educate_pro_GRIPPER Base[5]:paper;%{PE}%R 8.3.44,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:P1, 3:, 5:100, 7:PDAT1
-$BWDSTART=FALSE
-PDAT_ACT=PPDAT1
-FDAT_ACT=FP1
-BAS(#PTP_PARAMS,100)
-PTP XP1 
-;ENDFOLD
-;FOLD PTP P2 Vel=100 % PDAT2 Tool[14]:R2_educate_pro_GRIPPER Base[5]:paper;%{PE}%R 8.3.44,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:P2, 3:, 5:100, 7:PDAT2
-$BWDSTART=FALSE
-PDAT_ACT=PPDAT2
-FDAT_ACT=FP2
-BAS(#PTP_PARAMS,100)
-PTP XP2 
-;ENDFOLD
-;FOLD PTP P3 Vel=100 % PDAT3 Tool[14]:R2_educate_pro_GRIPPER Base[5]:paper;%{PE}%R 8.3.44,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:P3, 3:, 5:100, 7:PDAT3
-$BWDSTART=FALSE
-PDAT_ACT=PPDAT3
-FDAT_ACT=FP3
-BAS(#PTP_PARAMS,100)
-PTP XP3 
-;ENDFOLD
+
+; get marker
+;getMarker()
+; move to board
+
+
+; draw P1 and P2
+
+
+;   dX = 31.5
+ ;  dZ = 100
+;
+ ;  IF player == 1 THEN
+ ;     placePosition = XP1
+ ;  ELSE
+ ;     placePosition = XP2
+ ;  ENDIF
+
+   
+ ;  placePosition.X = placePosition.X + (deckColumn-1)*dX
+   
+ ;  upPosition = placePosition
+ ;  upPosition.Z = upPosition.Z + dZ
+
+;   $TOOL = TOOL_DATA[14]
+;   $BASE = BASE_DATA[5]
+   
+;   SPTP upPosition
+;   SLIN placePosition
+   
+;   GRPg_SetStateAndCheck(1, 1, 0.2, 1)
+   
+;   SLIN upPosition
+; 
+
+
+
+
+
+
 ;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
 $BWDSTART = FALSE
 PDAT_ACT=PDEFAULT

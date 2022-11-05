@@ -72,6 +72,7 @@
                               board[currentRow, currentColumn] = 0
                               RETURN(currentColumn)
                             ENDIF
+                            board[currentRow+1, currentColumn] = 0
                         ENDIF
                         board[currentRow, currentColumn] = 0
                         board[secondMoveRow, secondMoveColumn] = 0
@@ -151,6 +152,7 @@ DECL INT board[,]
                   board[currentRow, firstMoveColumn] = 0
                   RETURN (firstMoveColumn)
                  ENDIF
+                 board[currentRow+1, firstMoveColumn] = 0
               ENDIF
                ; remove wrong moves                
                board[currentRow, firstMoveColumn] = 0

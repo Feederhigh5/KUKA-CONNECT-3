@@ -1,30 +1,32 @@
 &ACCESS RV
-DEFFCT INT row_question ( )
+DEFFCT INT row_question (player:IN)
    DECL KrlMsg_T askForRow
    DECL KrlMsgDlgSK_T rowSoftkey[6]
-   DECL KrlMsgPar_T somethingParameter[3]
+   DECL KrlMsgPar_T pvpRowParameter[3]
    DECL KrlMsgOpt_T rowOption
    DECL INT dialogHandle
    DECL INT dialogValue
+   DECL INT player
    DECL BOOL dialogPresent
    
    ;FOLD SoftKeys
-   rowSoftkey[1] = {sk_type #value, sk_txt[] "Row 1"}
-   rowSoftkey[2] = {sk_type #value, sk_txt[] "Row 2"}
-   rowSoftkey[3] = {sk_type #value, sk_txt[] "Row 3"}
-   rowSoftkey[4] = {sk_type #value, sk_txt[] "Row 4"}
+   rowSoftkey[1] = {sk_type #value, sk_txt[] "Row D"}
+   rowSoftkey[2] = {sk_type #value, sk_txt[] "Row C"}
+   rowSoftkey[3] = {sk_type #value, sk_txt[] "Row B"}
+   rowSoftkey[4] = {sk_type #value, sk_txt[] "Row A"}
    ;ENDFOLD SoftKeys
    
    ;FOLD Parameter
-   somethingParameter[1] = {Par_Type #EMPTY}
-   somethingParameter[2] = {Par_Type #EMPTY}
-   somethingParameter[3] = {Par_Type #EMPTY}
+   pvpRowParameter[1] = {Par_Type #VALUE}
+   pvpRowParameter[1].Par_int = player
+   pvpRowParameter[2] = {Par_Type #EMPTY}
+   pvpRowParameter[3] = {Par_Type #EMPTY}
    ;ENDFOLD
    
    rowOption = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
-   askForRow = {modul[] "Row" , Nr 2069, msg_txt[] "Choose a column to drop your stone in."}
+   askForRow = {modul[] "Row" , Nr 2070, msg_txt[] "Player %1: Choose a row to drop your stone in."}
    
-   dialogHandle = SET_KRLDLG(askForRow, somethingParameter[], rowSoftkey[], rowOption)
+   dialogHandle = SET_KRLDLG(askForRow, pvpRowParameter[], rowSoftkey[], rowOption)
    dialogValue = 0
    dialogPresent = TRUE
    

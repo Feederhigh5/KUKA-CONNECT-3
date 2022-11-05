@@ -2,7 +2,7 @@
 &REL 1
 DEF  connect3FullGravity( )
 
-DECL INT row, col, targetColumn, targetRow, winningPlayer, currentPlayer, stoneNumber, moveToMake, myInt
+DECL INT row, col, targetColumn, targetRow, winningPlayer, currentPlayer, stoneNumber, moveToMake, myInt, gameNumber, numberOfWinsP1, numberOfWinsP2
 DECL INT robotColumn, robotRow
 DECL BOOL play
 DECL INT board[4,6], playerMoves[6]
@@ -31,7 +31,7 @@ PTP  XHOME
 
 dX = 47
 dY = 32
-dZ = 120
+dZ = 100
 play = TRUE
 
 FOR myInt=1 TO 6 STEP 1
@@ -48,8 +48,17 @@ ENDFOR
 
 ; --------------------------------------------
 ; ---------- 3 START OF THE PROGRAM ---------- 
-
+gameNumber = 1
+numberOfWinsP1 = 0
+numberOfWinsP2 = 0
 ; Restart Start -------------
+
+; temp
+;numberOfWinsP1 = 1
+;winningPlayer=1
+;drawCounterIncrease(winningPlayer, numberOfWinsP1, gameNumber)
+
+
 WHILE play == TRUE
    
    ; ----------  FILL BOARD WITH ZEROS ----------
@@ -122,35 +131,28 @@ WHILE play == TRUE
       ENDWHILE
    ENDIF
    
-;   IF (startingPlayer == 2) THEN
-;      WHILE (checkWinner(board[,]) == -1)
-;   
-;         ; Calulate robots move
-;         moveToMake = getOptimalMove(targetColumn, stoneNumber, playerMoves[1], playerMoves[3])
-;         
-;         targetRow = checkRow(board[,], moveToMake)
-;         board[targetRow, moveToMake] = 2
-;         placeStone(targetRow, moveToMake, 2, stoneNumber)
-;        IF (checkWinner(board[,]) <> -1) THEN
-;            EXIT
-;        ENDIF
-;         ; Get humans move
-;         targetColumn = col_question()
-;         targetRow = checkRow(board[,], targetColumn)
-;         board[targetRow, targetColumn] = 1
-;         placeStone(targetRow, targetColumn, 1, stoneNumber)
-;         playerMoves[stoneNumber] = targetColumn
-;         stoneNumber = stoneNumber + 1
-;      ENDWHILE
-;   ENDIF
 
    ; Print the winner is Player
    winningPlayer = checkWinner(board[,])
    winnerAnnouncement(winningPlayer)
+     
+   If winningPlayer == 1 THEN
+      numberOfWinsP1 = numberOfWinsP1 +1
+      ;draw counter increase
+      drawCounterIncrease(winningPlayer, numberOfWinsP1, gameNumber)
+   ENDIF
+   IF winningPlayer == 2 THEN
+      numberOfWinsP2 = numberOfWinsP2 +1
+      ;draw counter increase      
+      drawCounterIncrease(winningPlayer, numberOfWinsP2, gameNumber)
+   ENDIF
+
+    
    
    ; Do you want to play again?
   
    IF playAgainQuestion() == 1 THEN
+      gameNumber = gameNumber + 1
       play = TRUE
    ELSE 
       play = FALSE
@@ -186,8 +188,8 @@ DEF placeStone(row1:IN, targetColumn1:IN, currentPlayer1:IN, stoneNumber1:IN)
    upPosition.Z = upPosition.Z + dZ
    $TOOL = TOOL_DATA[14]
    $BASE = BASE_DATA[5]
-   SPTP upPosition
+   SPTP upPosition WITH $APO= SAPO_PTP( PPDAT10 ) C_SPL
    SLIN placePosition
    GRPg_SetStateAndCheck(1,1,0.2,0)
-   SLIN upPosition
+   SLIN upPosition WITH $APO= SAPO_PTP( PPDAT10 ) C_SPL
 END
