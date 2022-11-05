@@ -1,0 +1,97 @@
+&ACCESS RVO
+DEF  palletizing ( )
+
+DECL INT row, col, maxRow, maxCol
+DECL REAL dX, dY, dZ
+DECL E6POS placePosition, upPosition
+
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+
+maxRow = 3
+maxCol = 3
+dX = 58
+dY = 39
+dZ = 100
+
+FOR row = 1 to maxRow
+   for col = 1 to maxCol
+      pickstone()
+      
+      placePosition = XP1
+      placePosition.X = placePosition.X + (row-1)*dX
+      placePosition.Y = placePosition.Y + (col-1)*dY
+      
+      upPosition = placePosition
+      upPosition.Z = upPosition.Z + dZ
+
+      $TOOL = TOOL_DATA[14]
+      $BASE = BASE_DATA[5]
+      
+      SPTP upPosition
+      SLIN placePosition
+      
+      GRPg_SetStateAndCheck(1,1,0.2,0)
+      
+      SLIN upPosition
+      
+   endfor
+endfor
+
+FOR row = maxRow to 1 STEP -1
+   
+   
+   for col = maxCol to 1 STEP -1
+      
+      GRPg_SetStateAndCheck(1,1,0.2,0)
+      
+      placePosition = XP1
+      placePosition.X = placePosition.X + (row-1)*dX
+      placePosition.Y = placePosition.Y + (col-1)*dY
+      
+      upPosition = placePosition
+      upPosition.Z = upPosition.Z + dZ
+
+      $TOOL = TOOL_DATA[14]
+      $BASE = BASE_DATA[5]
+      
+      SPTP upPosition
+      SLIN placePosition
+      
+      GRPg_SetStateAndCheck(1, 2, 0.2, 1)
+      
+      SLIN upPosition
+      
+      storestone()
+      
+   endfor
+endfor
+
+;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+
+END

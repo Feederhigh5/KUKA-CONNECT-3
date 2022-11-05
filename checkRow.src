@@ -1,0 +1,15 @@
+﻿DEFFCT INT checkRow(board:OUT, targetColumn2:IN)
+   DECL INT rowCheckRow, targetColumn2, board[,]
+
+   rowCheckRow = 1
+
+   FOR rowCheckRow=1 TO boardRows STEP 1
+     ; check if position is empty
+     IF (board[rowCheckRow, targetColumn2]==0) THEN
+         ; Break out of FOR loop
+         RETURN rowCheckRow
+     ENDIF 
+   ENDFOR
+   ; RETURN column already full
+   RETURN -1
+ENDFCT

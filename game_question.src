@@ -1,0 +1,34 @@
+&ACCESS RV1
+DEFFCT INT game_question ( )
+   DECL KrlMsg_T askForGame
+   DECL KrlMsgDlgSK_T gameSoftkey[2]
+   DECL KrlMsgPar_T somethingParameter[3]
+   DECL KrlMsgOpt_T gameOption
+   DECL INT dialogHandle
+   DECL INT dialogValue
+   DECL BOOL dialogPresent
+   
+   ;FOLD SoftKeys
+   gameSoftkey[1] = {sk_type #value, sk_txt[] "With gravity."}
+   gameSoftkey[2] = {sk_type #value, sk_txt[] "Without gravity."}
+   ;ENDFOLD SoftKeys
+   
+   ;FOLD Parameter
+   somethingParameter[1] = {Par_Type #EMPTY}
+   somethingParameter[2] = {Par_Type #EMPTY}
+   somethingParameter[3] = {Par_Type #EMPTY}
+   ;ENDFOLD
+   
+   gameOption = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
+   askForGame = {modul[] "Game" , Nr 2022, msg_txt[] "Which game mode do you want to play?"}
+   
+   dialogHandle = SET_KRLDLG(askForGame, somethingParameter[], gameSoftkey[], gameOption)
+   dialogValue = 0
+   dialogPresent = TRUE
+   
+   WHILE dialogPresent == TRUE
+       dialogPresent = EXISTS_KRLDLG(dialogHandle, dialogValue)
+   ENDWHILE
+   
+   RETURN (dialogValue)
+ENDFCT

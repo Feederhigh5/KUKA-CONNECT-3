@@ -1,0 +1,82 @@
+﻿DEFFCT INT getOptimalMove(targetColumn:IN, stoneNumber:IN, playersFirstMove:IN, playersThirdMove:IN)
+
+DECL INT targetColumn, stoneNumber, playersFirstMove, playersThirdMove
+
+SWITCH stoneNumber
+
+   CASE 1
+      RETURN 3
+      
+   CASE 2
+      IF targetColumn <> 3 THEN
+         RETURN 3
+      ELSE
+         RETURN 4
+      ENDIF
+      
+   CASE 3
+      IF playersFirstMove <> 3 THEN
+         IF targetColumn <> 3 THEN
+            RETURN 3
+         ELSE
+            IF (playersFirstMove <> 1) AND (playersFirstMove <> 2) THEN
+               RETURN 2
+            ELSE
+               RETURN 4
+            ENDIF
+         ENDIF
+      ELSE
+         SWITCH targetColumn
+            CASE 2
+               RETURN 5
+            CASE 5
+               RETURN 2
+            DEFAULT 
+               RETURN 5
+         ENDSWITCH        
+      ENDIF
+      
+   CASE 4
+      IF (playersFirstMove <> 1) AND (playersFirstMove <> 2) THEN
+         IF targetColumn <> 1 THEN
+            RETURN 1
+         ELSE 
+            RETURN 2
+         ENDIF
+      ELSE
+         IF targetColumn <> 5 THEN
+            RETURN 5
+         ELSE
+            RETURN 4
+         ENDIF
+      ENDIF
+      
+   CASE 5
+      IF playersThirdMove == 5 THEN
+         IF targetColumn <> 5 THEN
+            RETURN 5
+         ENDIF 
+         IF targetColumn <> 2 THEN
+            RETURN 2
+         ENDIF 
+      ENDIF 
+      
+      IF playersThirdMove == 1 THEN
+         IF targetColumn <> 1 THEN
+            RETURN 1
+         ENDIF 
+         IF targetColumn <> 4 THEN
+            RETURN 4
+         ENDIF 
+      ENDIF  
+
+   DEFAULT
+      RETURN -1
+ENDSWITCH
+
+
+
+
+
+
+ENDFCT

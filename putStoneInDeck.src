@@ -1,0 +1,31 @@
+﻿DEF  putStoneInDeck (player:IN, deckColumn:IN)
+   DECL INT deckColumn, player
+   DECL REAL dX, dZ
+   DECL FRAME placePosition, upPosition
+
+   dX = 31.5
+   dZ = 100
+
+   IF player == 1 THEN
+      placePosition = XP1
+   ELSE
+      placePosition = XP2
+   ENDIF
+
+   
+   placePosition.X = placePosition.X + (deckColumn-1)*dX
+   
+   upPosition = placePosition
+   upPosition.Z = upPosition.Z + dZ
+
+   $TOOL = TOOL_DATA[14]
+   $BASE = BASE_DATA[5]
+   
+   SPTP upPosition
+   SLIN placePosition
+   
+   GRPg_SetStateAndCheck(1, 1, 0.2, 1)
+   
+   SLIN upPosition
+
+END

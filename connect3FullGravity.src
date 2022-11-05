@@ -1,0 +1,193 @@
+&ACCESS RVP
+&REL 1
+DEF  connect3FullGravity( )
+
+DECL INT row, col, targetColumn, targetRow, winningPlayer, currentPlayer, stoneNumber, moveToMake, myInt
+DECL INT robotColumn, robotRow
+DECL BOOL play
+DECL INT board[4,6], playerMoves[6]
+
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+GRPg_SetStateAndCheck(1,1,0.2,0)
+;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+; initialize global values
+
+dX = 47
+dY = 32
+dZ = 120
+play = TRUE
+
+FOR myInt=1 TO 6 STEP 1
+   playerMoves[myInt]=-1
+ENDFOR
+
+
+
+; ---------- PREPARE BOARD WITH STONES -------
+
+;prepareBoard()
+
+
+
+; --------------------------------------------
+; ---------- 3 START OF THE PROGRAM ---------- 
+
+; Restart Start -------------
+WHILE play == TRUE
+   
+   ; ----------  FILL BOARD WITH ZEROS ----------
+   row = 1
+   col = 1
+   FOR row=1 TO boardRows STEP 1
+      FOR col=1 TO boardColumns STEP 1
+         board[row, col]=0
+      ENDFOR
+   ENDFOR
+   
+   stoneNumber = 1
+   currentPlayer = -1
+   moveToMake = -1
+   targetColumn = -1
+   
+   startingPlayer = player_question()
+   ; 1 = Human starts, 2 = Robot starts
+   
+   IF (startingPlayer == 1) THEN
+       WHILE (checkWinner(board[,]) == -1)
+         targetColumn = col_question()
+         WHILE checkRow(board[,], targetColumn)  == -1
+           ; error message for full row
+           errorColumnFull(targetColumn)
+           targetColumn = col_question()
+         ENDWHILE
+         
+         targetRow = checkRow(board[,], targetColumn)
+         ; Place block for player
+         board[targetRow, targetColumn] = 1
+         placeStone(targetRow, targetColumn, 1, stoneNumber)
+         IF (checkWinner(board[,]) <> -1) THEN
+            EXIT
+         ENDIF
+         ; calculate robot response
+         robotColumn = calculateRobotResponse(board[,], targetColumn)
+         robotRow = checkRow(board[,], robotColumn)
+         board[robotRow, robotColumn] = 2
+         placeStone(robotRow, robotColumn, 2, stoneNumber)
+         stoneNumber = stoneNumber + 1
+       ENDWHILE
+   ENDIF
+   
+   IF (startingPlayer == 2) THEN
+      targetColumn = 4
+      WHILE (checkWinner(board[,]) == -1)
+         ; calculate robot response
+         robotColumn = calculateRobotResponse(board[,], targetColumn)
+         robotRow = checkRow(board[,], robotColumn)
+         board[robotRow, robotColumn] = 2
+         placeStone(robotRow, robotColumn, 2, stoneNumber)
+         IF (checkWinner(board[,]) <> -1) THEN
+            EXIT
+         ENDIF
+         
+         ; Get humans move
+         targetColumn = col_question()
+         WHILE checkRow(board[,], targetColumn)  == -1
+           ; error message for full row
+           errorColumnFull(targetColumn)
+           targetColumn = col_question()
+         ENDWHILE
+         targetRow = checkRow(board[,], targetColumn)
+         
+         ; Place block for player
+         board[targetRow, targetColumn] = 1
+         placeStone(targetRow, targetColumn, 1, stoneNumber)
+         stoneNumber = stoneNumber + 1
+      ENDWHILE
+   ENDIF
+   
+;   IF (startingPlayer == 2) THEN
+;      WHILE (checkWinner(board[,]) == -1)
+;   
+;         ; Calulate robots move
+;         moveToMake = getOptimalMove(targetColumn, stoneNumber, playerMoves[1], playerMoves[3])
+;         
+;         targetRow = checkRow(board[,], moveToMake)
+;         board[targetRow, moveToMake] = 2
+;         placeStone(targetRow, moveToMake, 2, stoneNumber)
+;        IF (checkWinner(board[,]) <> -1) THEN
+;            EXIT
+;        ENDIF
+;         ; Get humans move
+;         targetColumn = col_question()
+;         targetRow = checkRow(board[,], targetColumn)
+;         board[targetRow, targetColumn] = 1
+;         placeStone(targetRow, targetColumn, 1, stoneNumber)
+;         playerMoves[stoneNumber] = targetColumn
+;         stoneNumber = stoneNumber + 1
+;      ENDWHILE
+;   ENDIF
+
+   ; Print the winner is Player
+   winningPlayer = checkWinner(board[,])
+   winnerAnnouncement(winningPlayer)
+   
+   ; Do you want to play again?
+  
+   IF playAgainQuestion() == 1 THEN
+      play = TRUE
+   ELSE 
+      play = FALSE
+   ENDIF
+   cleanUp(board[,])
+
+ENDWHILE
+
+
+
+
+;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+
+END
+
+DEF placeStone(row1:IN, targetColumn1:IN, currentPlayer1:IN, stoneNumber1:IN)
+   DECL INT targetColumn1, currentPlayer1, stoneNumber1, row1
+   DECL FRAME placePosition, upPosition
+   
+   pickstoneFromBoard (currentPlayer1, stoneNumber1)
+   
+   placePosition = XP1
+   placePosition.X = placePosition.X + (targetColumn1-1)*dX
+   placePosition.Y = placePosition.Y + (row1-1)*dY
+   upPosition = placePosition
+   upPosition.Z = upPosition.Z + dZ
+   $TOOL = TOOL_DATA[14]
+   $BASE = BASE_DATA[5]
+   SPTP upPosition
+   SLIN placePosition
+   GRPg_SetStateAndCheck(1,1,0.2,0)
+   SLIN upPosition
+END

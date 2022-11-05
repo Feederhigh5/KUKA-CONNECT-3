@@ -1,0 +1,34 @@
+&ACCESS RV1
+DEFFCT INT playAgainQuestion ( )
+   DECL KrlMsg_T askForPlayer
+   DECL KrlMsgDlgSK_T playerSoftkey[2]
+   DECL KrlMsgPar_T somethingParameter[3]
+   DECL KrlMsgOpt_T playerOption
+   DECL INT dialogHandle
+   DECL INT dialogValue
+   DECL BOOL dialogPresent
+   
+   ;FOLD SoftKeys
+   playerSoftkey[1] = {sk_type #value, sk_txt[] "Yes."}
+   playerSoftkey[2] = {sk_type #value, sk_txt[] "No."}
+   ;ENDFOLD SoftKeys
+   
+   ;FOLD Parameter
+   somethingParameter[1] = {Par_Type #EMPTY}
+   somethingParameter[2] = {Par_Type #EMPTY}
+   somethingParameter[3] = {Par_Type #EMPTY}
+   ;ENDFOLD
+   
+   playerOption = {VL_STOP FALSE, Clear_P_Reset TRUE, Clear_P_SAW FALSE, Log_to_DB TRUE}
+   askForPlayer = {modul[] "Restart" , Nr 2002, msg_txt[] "Do you want to play again?"}
+   
+   dialogHandle = SET_KRLDLG(askForPlayer, somethingParameter[], playerSoftkey[], playerOption)
+   dialogValue = 0
+   dialogPresent = TRUE
+   
+   WHILE dialogPresent == TRUE
+       dialogPresent = EXISTS_KRLDLG(dialogHandle, dialogValue)
+   ENDWHILE
+   
+   RETURN (dialogValue)
+ENDFCT

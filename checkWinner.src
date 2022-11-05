@@ -1,0 +1,180 @@
+&ACCESS RV1
+DEFFCT INT checkWinner(board:OUT)
+   DECL INT inARowPlayer1, inARowPlayer2, row, column, tempWinner
+   DECL INT board[,]
+   
+   row = 1
+   column = 1
+            
+   
+       ; check rows for winner
+       FOR row=1 TO boardRows STEP 1
+           inARowPlayer1 = 0
+           inARowPlayer2 = 0
+           FOR column=1 TO boardColumns STEP 1
+               IF (board[row, column]==1) THEN
+                   inARowPlayer1 = inARowPlayer1 + 1
+               ELSE
+                inARowPlayer1 = 0
+               ENDIF
+               IF (board[row, column] == 2) THEN
+                   inARowPlayer2 = inARowPlayer2 + 1
+               ELSE
+                  inARowPlayer2 = 0
+               ENDIF
+               IF (inARowPlayer1 >= 3) THEN
+               ; Winner Player 1
+                   RETURN 1
+               ENDIF
+               IF (inARowPlayer2 >= 3) THEN
+               ; Winner Player 2
+                   RETURN 2
+               ENDIF
+           ENDFOR
+       ENDFOR
+   
+       ; check columns for winner
+       FOR column=1 TO boardColumns STEP 1
+           inARowPlayer1 = 0
+           inARowPlayer2 = 0
+           FOR row=1 TO boardRows STEP 1
+               IF (board[row, column]==1) THEN
+                   inARowPlayer1 = inARowPlayer1 + 1
+               ELSE
+                  inARowPlayer1 = 0
+               ENDIF
+               IF (board[row, column] == 2) THEN
+                   inARowPlayer2 = inARowPlayer2 + 1
+               ELSE
+                  inARowPlayer2 = 0
+               ENDIF
+               IF (inARowPlayer1 >= 3) THEN
+               ; Winner Player 1
+                   RETURN 1
+               ENDIF
+               IF (inARowPlayer2 >= 3) THEN
+               ; Winner Player 2
+                   RETURN 2
+               ENDIF
+           ENDFOR
+       ENDFOR
+
+       ; check diagonal / for winner
+       tempWinner = checkDiagonalTiltRight(board[,],2,1)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltRight(board[,],1,1)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltRight(board[,],1,2)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltRight(board[,],1,3)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltRight(board[,],1,4)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       
+       ; check diagonal \ for winner
+       tempWinner = checkDiagonalTiltLeft(board[,],2,6)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltLeft(board[,],1,6)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltLeft(board[,],1,5)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltLeft(board[,],1,4)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+       tempWinner = checkDiagonalTiltLeft(board[,],1,3)
+       IF NOT (tempWinner == -1 ) THEN
+         RETURN tempWinner
+       ENDIF
+   
+RETURN -1
+
+ENDFCT
+
+; /
+DEFFCT INT checkDiagonalTiltRight(board:OUT, startRow:IN, startCol:IN)
+   DECL INT startRow, startCol, inARowPlayer1, inARowPlayer2, column, row
+   DECL INT board[,]
+   ; start points [2,1], [1,1] [1,2], [1,3], [1,4]
+   inARowPlayer1 = 0
+   inARowPlayer2 = 0
+   
+   column = startCol
+   FOR row=startRow TO boardRows STEP 1
+      IF (board[row, column]==1) THEN
+          inARowPlayer1 = inARowPlayer1 + 1
+      ELSE
+         inARowPlayer1 = 0
+      ENDIF
+      IF (board[row, column] == 2) THEN
+          inARowPlayer2 = inARowPlayer2 + 1
+      ELSE
+         inARowPlayer2 = 0
+      ENDIF
+      IF (inARowPlayer1 >= 3) THEN
+      ; Winner Player 1
+         RETURN 1
+      ENDIF
+      IF (inARowPlayer2 >= 3) THEN
+      ; Winner Player 2
+         RETURN 2
+      ENDIF
+      IF (column == boardColumns) THEN
+         EXIT
+      ENDIF
+      column = column + 1
+   ENDFOR
+   RETURN -1
+ENDFCT
+
+; \
+DEFFCT INT checkDiagonalTiltLeft(board:OUT, startRow:IN, startCol:IN)
+   DECL INT startRow, startCol, inARowPlayer1, inARowPlayer2, column, row
+   DECL INT board[,]
+   ; start points [2,6], [1,6] [1,5], [1,4], [1,3]
+   inARowPlayer1 = 0
+   inARowPlayer2 = 0
+   column = startCol
+   row = startRow
+   FOR row=startRow TO boardRows STEP 1
+      IF (board[row, column]==1) THEN
+          inARowPlayer1 = inARowPlayer1 + 1
+      ELSE
+      inARowPlayer1 = 0
+      ENDIF
+      IF (board[row, column] == 2) THEN
+          inARowPlayer2 = inARowPlayer2 + 1
+      ELSE
+      inARowPlayer2 = 0
+      ENDIF
+      IF (inARowPlayer1 >= 3) THEN
+      ; Winner Player 1
+         RETURN 1
+      ENDIF
+      IF (inARowPlayer2 >= 3) THEN
+      ; Winner Player 2
+         RETURN 2
+      ENDIF
+      IF (column == 1) THEN
+         EXIT
+      ENDIF
+      column = column - 1
+   ENDFOR
+   RETURN -1
+ENDFCT

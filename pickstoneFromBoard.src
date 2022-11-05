@@ -1,0 +1,44 @@
+﻿DEF  pickstoneFromBoard (currentPlayer:IN, stoneNumber:IN)
+      
+   DECL INT stoneNumber, currentPlayer
+   DECL REAL dX, dZ
+   DECL FRAME placePosition, upPosition
+   
+   ;FOLD INI;%{PE}
+     ;FOLD BASISTECH INI
+       GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+       INTERRUPT ON 3 
+       BAS (#INITMOV,0 )
+     ;ENDFOLD (BASISTECH INI)
+     ;FOLD USER INI
+       ;Make your modifications here
+   
+     ;ENDFOLD (USER INI)
+   ;ENDFOLD (INI)
+
+   dX = 31.5
+   dZ = 100
+ 
+   IF currentPlayer == 1 THEN
+      placePosition = XP1
+   ENDIF
+   IF currentPlayer == 2 THEN
+      placePosition = XP2
+   ENDIF
+   
+   placePosition.X = placePosition.X + (stoneNumber-1)*dX 
+      
+   upPosition = placePosition
+   upPosition.Z = upPosition.Z + dZ
+   
+   $TOOL = TOOL_DATA[14]
+   $BASE = BASE_DATA[5]
+      
+   SPTP upPosition
+   SLIN placePosition
+      
+   GRPg_SetStateAndCheck(1, 2, 0.2, 1)
+      
+   SLIN upPosition
+      
+END

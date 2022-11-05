@@ -1,0 +1,68 @@
+﻿DEF  cleanUp(board:OUT)
+DECL INT col, numOfCols, row, numOfRows, countStonesPerPlayer1, countStonesPerPlayer2
+
+DECL INT board[,]
+
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+numOfCols = 6
+numOfRows = 4
+
+countStonesPerPlayer1 = 1
+countStonesPerPlayer2 = 1
+
+
+FOR col = 1 to numOfCols STEP 1
+   FOR row = 1 to numOfRows STEP 1
+      IF board[row,col] == 1 THEN
+         getStone(row, col)
+         putStoneInDeck(1, countStonesPerPlayer1)
+         countStonesPerPlayer1 = countStonesPerPlayer1 + 1
+         board[row,col] = 0
+      ENDIF
+      IF board[row,col] == 2 THEN
+         getStone(row, col)
+         putStoneInDeck(2, countStonesPerPlayer2)
+         countStonesPerPlayer2 = countStonesPerPlayer2 + 1
+         board[row,col] = 0
+      ENDIF
+   ENDFOR
+ENDFOR
+
+
+
+END
+
+DEF getStone(row:IN, col:IN)
+
+   DECL REAL dX, dZ, dY
+   DECL FRAME placePosition, upPosition
+   DECL INT row, col
+   dX = 47
+   dY = 32
+   dZ = 120
+   
+   placePosition = XP1
+   placePosition.X = placePosition.X + (col-1)*dX
+   placePosition.Y = placePosition.Y + (row-1)*dY
+   
+   upPosition = placePosition
+   upPosition.Z = upPosition.Z + dZ
+   
+   $TOOL = TOOL_DATA[14]
+   $BASE = BASE_DATA[5]
+   SPTP upPosition
+   SLIN placePosition
+   GRPg_SetStateAndCheck(1,2,0.2,0)
+   SLIN upPosition
+END

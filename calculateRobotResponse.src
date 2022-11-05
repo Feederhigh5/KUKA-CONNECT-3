@@ -1,0 +1,167 @@
+﻿DEFFCT INT calculateRobotResponse(board:OUT, humanTargetColumn:IN)
+
+   DECL INT board[,]
+   DECL INT humanTargetColumn, currentRow, currentColumn, secondMoveRow, secondMoveColumn, possibleHumanColumnStart, possibleHumanColumnEnd, tempColumn
+      ; move robot if it has winning move
+       FOR currentColumn = 1 TO boardColumns STEP 1
+            IF checkRow(board[,], currentColumn) <> -1 THEN
+               currentRow = checkRow(board[,], currentColumn)
+               ; temporarily set robot move
+               board[currentRow, currentColumn] = 2
+               ; if robot has winning move
+               IF (checkWinner(board[,])==2) THEN
+                  ; remove temp move
+                  board[currentRow, currentColumn] = 0
+                  ; place stone for winning move 
+                  RETURN (currentColumn)
+               ENDIF
+               board[currentRow, currentColumn] = 0
+            ENDIF
+       ENDFOR
+          ; if Robot does not have winning move, check if human has winning move
+          ; check if human has winning move
+          possibleHumanColumnStart = humanTargetColumn - 2
+          IF possibleHumanColumnStart < 1 THEN
+             possibleHumanColumnStart = 1
+          ENDIF
+          possibleHumanColumnEnd = humanTargetColumn + 2
+          IF possibleHumanColumnEnd > 6 THEN
+             possibleHumanColumnEnd = 6
+          ENDIF
+          FOR currentColumn = possibleHumanColumnStart TO possibleHumanColumnEnd STEP 1
+            IF checkRow(board[,], currentColumn) <> -1 THEN
+               currentRow = checkRow(board[,], currentColumn)
+               ; temporarily set human move
+               board[currentRow, currentColumn] = 1
+               ; if human has winning move
+               IF (checkWinner(board[,])==1) THEN
+                   ; remove temp human move
+                   board[currentRow, currentColumn] = 0
+                   ; place stone to block winning move 
+                   RETURN (currentColumn)
+               ENDIF
+               board[currentRow, currentColumn] = 0
+            ENDIF
+
+          ENDFOR
+          ; choose something where second move could be winning move
+          FOR currentColumn = 1 TO boardColumns STEP 1
+              FOR secondMoveColumn = 1 TO boardColumns STEP 1
+                IF checkRow(board[,], currentColumn) <> -1 THEN
+                    currentRow = checkRow(board[,], currentColumn)
+                    IF checkRow(board[,], secondMoveColumn) <> -1 THEN
+                        secondMoveRow = checkRow(board[,], secondMoveColumn)
+                        ; temporarily set robot move
+                        board[currentRow, currentColumn] = 2
+                        board[secondMoveRow, secondMoveColumn] = 2
+                        ; if robot has winning move
+                        IF (checkWinner(board[,])==2) THEN
+                            ; remove temporary robot move
+                            board[secondMoveRow, secondMoveColumn] = 0
+                            IF currentRow == boardRows THEN
+                               ; remove temp mov
+                               board[currentRow, currentColumn] = 0
+                               RETURN (currentColumn)
+                            ENDIF
+                            ; check if first move enables human to win
+                            board[currentRow+1, currentColumn] = 1
+                            IF (checkWinner(board[,])<>1) THEN
+                              ; remove temp human move
+                              board[currentRow+1, currentColumn] = 0
+                              ; remove temp mov
+                              board[currentRow, currentColumn] = 0
+                              RETURN(currentColumn)
+                            ENDIF
+                        ENDIF
+                        board[currentRow, currentColumn] = 0
+                        board[secondMoveRow, secondMoveColumn] = 0
+                    ENDIF
+                ENDIF
+              ENDFOR
+          ENDFOR
+      
+          ; choose something where third move could be winning move
+          tempColumn = checkThreeMoves(board[,], 3)
+          IF (tempColumn <> -1 ) THEN
+            RETURN tempColumn
+          ENDIF
+          tempColumn = checkThreeMoves(board[,], 4)
+          IF (tempColumn <> -1 ) THEN
+            RETURN tempColumn
+          ENDIF
+          tempColumn = checkThreeMoves(board[,], 2)
+          IF (tempColumn <> -1 ) THEN
+            RETURN tempColumn
+          ENDIF
+          tempColumn = checkThreeMoves(board[,], 5)
+          IF (tempColumn <> -1 ) THEN
+            RETURN tempColumn
+          ENDIF
+          tempColumn = checkThreeMoves(board[,], 1)
+          IF (tempColumn <> -1 ) THEN
+            RETURN tempColumn
+          ENDIF
+          tempColumn = checkThreeMoves(board[,], 6)
+          IF (tempColumn <> -1 ) THEN
+            RETURN tempColumn
+          ENDIF
+   
+      IF (checkRow(board[,], 6) <= boardRows) THEN
+          RETURN(6)
+      ENDIF
+   RETURN(1)
+
+ENDFCT
+
+
+DEFFCT INT checkThreeMoves (board:OUT, firstMoveColumn:IN)
+
+DECL INT firstMoveColumn
+DECL INT currentRow, secondMoveRow, secondMoveColumn, thirdMoveColumn, thirdMoveRow
+DECL INT board[,]
+
+  FOR secondMoveColumn = 1 TO boardColumns STEP 1
+      FOR thirdMoveColumn = 1 TO boardColumns STEP 1
+        IF checkRow(board[,], firstMoveColumn) <> -1 THEN
+         currentRow = checkRow(board[,], firstMoveColumn)
+           IF checkRow(board[,], secondMoveColumn) <> -1 THEN
+            secondMoveRow = checkRow(board[,], secondMoveColumn)
+            IF checkRow(board[,], thirdMoveColumn) <> -1 THEN
+               thirdMoveRow = checkRow(board[,], thirdMoveColumn)
+               ; temporarily set robot move
+               board[currentRow, firstMoveColumn] = 2
+               board[secondMoveRow, secondMoveColumn] = 2
+               board[thirdMoveRow, thirdMoveColumn] = 2
+               ; if robot has winning move
+               IF (checkWinner(board[,])==2) THEN
+                 ; remove temporary robot move
+                 board[secondMoveRow, secondMoveColumn] = 0
+                 ; remove temporary third robot move
+                 board[thirdMoveRow, thirdMoveColumn] = 0
+                 IF currentRow == boardRows THEN
+                   ; remove temp move
+                    board[currentRow, firstMoveColumn] = 0
+                   RETURN (firstMoveColumn)
+                 ENDIF
+                 ; check if first move enables human to win
+                 board[currentRow+1, firstMoveColumn] = 1
+                 IF (checkWinner(board[,])<>1) THEN
+                  ; remove temp human move
+                  board[currentRow+1, firstMoveColumn] = 0
+                  board[currentRow, firstMoveColumn] = 0
+                  RETURN (firstMoveColumn)
+                 ENDIF
+              ENDIF
+               ; remove wrong moves                
+               board[currentRow, firstMoveColumn] = 0
+               board[secondMoveRow, secondMoveColumn] = 0
+               board[thirdMoveRow, thirdMoveColumn] = 0
+            ENDIF
+           ENDIF
+          
+        ENDIF
+          
+      ENDFOR
+  ENDFOR
+  RETURN -1
+ENDFCT
